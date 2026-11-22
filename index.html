@@ -54,24 +54,29 @@ main{max-width:1280px;margin:auto;padding:22px 18px 80px}
 body.solutions .sol{display:block}
 .sol-tag{background:var(--warn-soft);border:1px dashed var(--warn);color:var(--warn);border-radius:10px;padding:8px 12px;margin-top:10px;font-size:15px}
 
-/* ===== Stage 1 ===== */
+/* ===== Stage 1 player ===== */
+.player{position:relative;background:#0f2523;border-radius:var(--r);overflow:hidden;aspect-ratio:16/9;max-height:62vh;margin:auto}
+.player video{width:100%;height:100%;display:block;background:#000}
+.anim{position:absolute;inset:0}
+.anim svg{width:100%;height:100%;display:block}
+.subs{position:absolute;inset-inline:6%;bottom:13%;text-align:center;pointer-events:none}
+.subs span{display:inline-block;background:rgba(0,0,0,.72);color:#fff;padding:6px 16px;border-radius:8px;font-size:clamp(14px,2.1vw,24px);line-height:1.55;max-width:100%}
+.subs .who{color:#ffd88a;font-weight:700}
+.freeze{position:absolute;inset:0;background:rgba(15,37,35,.78);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;text-align:center;padding:4%;opacity:0;transition:opacity .6s;pointer-events:none}
+.freeze.on{opacity:1}
+.freeze .q{font-size:clamp(18px,2.8vw,34px);font-weight:800;line-height:1.5}
+.freeze .tag{background:#ffd88a;color:#3b2a07;border-radius:6px;padding:2px 10px;font-size:clamp(11px,1.3vw,15px);margin-bottom:12px;font-weight:700}
+.ctrls{display:flex;align-items:center;gap:10px;padding:10px 4px 0}
+.ctrls .bar{flex:1;height:8px;background:var(--line);border-radius:99px;position:relative;cursor:pointer;direction:ltr}
+.ctrls .bar i{position:absolute;inset-block:0;left:0;background:var(--teal);border-radius:99px;width:0}
+.ctrls .bar b{position:absolute;top:-4px;width:3px;height:16px;background:var(--teal-2)}
+.ctrls .tm{direction:ltr;font-variant-numeric:tabular-nums;color:var(--muted);min-width:96px;text-align:center}
 .vcards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px}
 .vcard{border:2px solid var(--line);background:#fff;border-radius:14px;padding:22px 10px;text-align:center;font-size:21px;font-weight:700;color:var(--ink);transition:.15s}
 .vcard:hover{border-color:var(--teal-2)}
 .vcard.on{border-color:var(--teal);background:var(--teal-soft);color:var(--teal)}
 .vcard.on::before{content:"✓ ";}
 
-.dlg{display:flex;flex-direction:column;gap:12px}
-.ln{max-width:78%;border-radius:14px;padding:10px 16px;box-shadow:var(--shadow)}
-.ln b{display:block;font-size:14px;margin-bottom:2px}
-.ln p{margin:0;font-size:19px}
-.ln.z{background:#f3ecf4;border:1px solid #dccbe0;align-self:flex-start}
-.ln.z b{color:#7a4a80}
-.ln.u{background:var(--teal-soft);border:1px solid var(--teal-line);align-self:flex-end}
-.ln.u b{color:var(--teal)}
-.stopq{margin-top:18px;background:#0f2523;color:#fff;border-radius:var(--r);padding:20px;text-align:center}
-.stopq span{background:#ffd88a;color:#3b2a07;border-radius:6px;padding:2px 10px;font-size:14px;font-weight:700}
-.stopq p{margin:10px 0 0;font-size:clamp(18px,2.4vw,26px);font-weight:800;line-height:1.6}
 /* ===== Stage 2 ===== */
 .split{display:grid;grid-template-columns:40fr 60fr;gap:18px;align-items:start}
 .docpane{position:sticky;top:84px}
@@ -188,20 +193,25 @@ footer.f{color:var(--muted);font-size:13px;text-align:center;padding:16px}
 <main>
 <!-- ============ STAGE 1 ============ -->
 <section class="stage" id="s1" data-i="0">
-  <div class="stage-head"><h1>01 · الوضعية المهنية</h1><span class="sub">00:00 – 05:00 · وضعية مهنية ثم تفاعل</span></div>
+  <div class="stage-head"><h1>01 · الوضعية المهنية</h1><span class="sub">00:00 – 05:00 · فيديو الوضعية (60 ثانية) ثم تفاعل</span></div>
   <div class="box">
-    <h2>الوضعية المهنية</h2>
-    <p style="margin-top:0;color:var(--muted)">في قاعة الأساتذة، أستاذ يصحح أوراق التقويم، ويقترب منه زميله:</p>
-    <div class="dlg">
-      <div class="ln z"><b>الزميل</b><p>«هذا المتعلم تنقصه نقطتان فقط للنجاح. هل يمكن مساعدته بإضافتهما؟»</p></div>
-      <div class="ln u"><b>الأستاذ</b><p>«لكن النتيجة ينبغي أن تعكس عمله الحقيقي. وماذا عن حق بقية المتعلمين في الإنصاف؟»</p></div>
-      <div class="ln z"><b>الزميل</b><p>«ظروفه الاجتماعية صعبة...»</p></div>
+    <h2>شاهد الوضعية</h2>
+    <div class="player" id="player">
+      <video id="vid" class="hidden" playsinline preload="metadata"><track kind="subtitles" srclang="ar" label="العربية" default></video>
+      <div class="anim" id="anim"></div>
+      <div class="subs" id="subs"></div>
+      <div class="freeze" id="freeze"><div class="tag">لقطة توقف · ورقة التنقيط</div><div class="q">ما القيم التي تتداخل في هذه الوضعية؟<br>وكيف نربطها بمنظومة القيم في المنهاج؟</div></div>
     </div>
-    <div class="stopq"><span>لحظة توقف · ورقة التنقيط</span><p>ما القيم التي تتداخل في هذه الوضعية؟<br>وكيف نربطها بمنظومة القيم في المنهاج؟</p></div>
+    <div class="ctrls">
+      <button class="btn small" id="vPlay">▶ تشغيل</button>
+      <button class="btn small ghost" id="vRestart">↺ إعادة</button>
+      <div class="bar" id="vBar"><i></i><b style="left:33.3%"></b><b style="left:66.6%"></b></div>
+      <span class="tm" id="vTime">0:00 / 1:00</span>
+    </div>
   </div>
 
   <div class="box" id="afterVideo">
-    <h2>ما القيم التي تثيرها الوضعية؟</h2>
+    <h2>شاشة ما بعد الفيديو</h2>
     <p style="margin-top:0">اختر القيم التي تثيرها الوضعية (يمكن اختيار أكثر من بطاقة):</p>
     <div class="vcards" id="vcards"></div>
     <div class="row" style="margin-top:14px"><button class="btn" id="showProps">عرض المقترحات</button></div>
@@ -292,7 +302,7 @@ footer.f{color:var(--muted);font-size:13px;text-align:center;padding:16px}
   </div>
 </section>
 </main>
-<footer class="f">المرجع: منهاج التربية الإسلامية، مديرية المناهج، يونيو 2016 (الصفحتان 8 و22). الرسومات التفاعلية تخطيطات تنفيذية من إعدادنا، وليست صوراً رسمية من المنهاج. الوضعية المهنية موجهة للتكوين، وليست درساً موجهاً للتلاميذ.</footer>
+<footer class="f">المرجع: منهاج التربية الإسلامية، مديرية المناهج، يونيو 2016 (الصفحتان 8 و22). الرسومات التفاعلية تخطيطات تنفيذية من إعدادنا، وليست صوراً رسمية من المنهاج. الفيديو وضعية مهنية للتكوين، وليس درساً موجهاً للتلاميذ.</footer>
 
 <!-- modal -->
 <div class="modal hidden" id="modal">
@@ -314,6 +324,8 @@ footer.f{color:var(--muted);font-size:13px;text-align:center;padding:16px}
     </div>
     <h4>الانتقال بين المراحل</h4>
     <div class="grid" id="tSteps"></div>
+    <h4>الفيديو</h4>
+    <div class="grid"><button class="btn" id="tPlay">▶ تشغيل</button><button class="btn ghost" id="tPause">⏸ إيقاف</button></div>
     <h4>الخريطة</h4>
     <div class="grid"><button class="btn" id="tMapShow">إظهار الخريطة</button><button class="btn ghost" id="tMapHide">إخفاء الخريطة</button></div>
     <h4>الحلول</h4>
@@ -337,6 +349,9 @@ footer.f{color:var(--muted);font-size:13px;text-align:center;padding:16px}
 <script>
 /* ==================== CONFIG ==================== */
 const CONFIG = {
+  // لربط ملف الفيديو الحقيقي: ضع مسار الملف هنا، مثال: "video.mp4" ومسار الترجمة "video.ar.vtt"
+  videoSrc: "video.mp4",
+  videoSubs: "",
   docUrl: "https://profeps.ma/documents/op/op-education-islamique-curriculum-2016.pdf",
   storeKey: "basira_values_session_v1",
   onSave: null // دالة اختيارية للإدماج: (record) => {...} لإرسال النتائج إلى المنصة
@@ -362,6 +377,7 @@ function go(i){
   cur=i; $$('.stage').forEach((s,k)=>s.classList.toggle('hidden',k!==i));
   $$('#steps button').forEach((b,k)=>b.classList.toggle('on',k===i));
   $$('#tSteps button').forEach((b,k)=>b.classList.toggle('ghost',k!==i));
+  if(i!==0) player.pause();
   window.scrollTo({top:0,behavior:'smooth'});
   try{ history.replaceState(null,'','#stage-'+(i+1)); }catch(e){}
 }
@@ -431,7 +447,92 @@ document.addEventListener('click',e=>{
   const a=armed; armed=null; a.chip.classList.remove('sel'); $$('.armed').forEach(x=>x.classList.remove('armed')); a.onDrop(a.chip,z);
 });
 
-/* ==================== STAGE 1 ==================== */
+/* ==================== STAGE 1: video ==================== */
+const SCRIPT = [
+  {a:0,b:20,who:'الزميل',txt:'هذا المتعلم تنقصه نقطتان فقط للنجاح. هل يمكن مساعدته بإضافتهما؟'},
+  {a:20,b:33,who:'الأستاذ',txt:'لكن النتيجة ينبغي أن تعكس عمله الحقيقي. وماذا عن حق بقية المتعلمين في الإنصاف؟'},
+  {a:33,b:40,who:'الزميل',txt:'ظروفه الاجتماعية صعبة...'},
+];
+const DUR=60;
+const animSVG = `
+<svg viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+ <defs><linearGradient id="wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9f1ef"/><stop offset="1" stop-color="#d3e4e1"/></linearGradient></defs>
+ <rect width="1600" height="900" fill="url(#wall)"/>
+ <rect x="0" y="610" width="1600" height="290" fill="#c2d6d2"/>
+ <rect x="80" y="90" width="520" height="290" rx="10" fill="#2f4f4a"/><rect x="96" y="106" width="488" height="258" rx="6" fill="#3d6660"/>
+ <text x="340" y="250" text-anchor="middle" font-size="54" fill="#cfe3df" font-family="Tajawal,sans-serif">التقويم</text>
+ <rect x="1180" y="120" width="300" height="230" rx="8" fill="#fff" stroke="#9cc2bd" stroke-width="4"/>
+ <g stroke="#cbdad7" stroke-width="6"><line x1="1210" y1="170" x2="1450" y2="170"/><line x1="1210" y1="215" x2="1450" y2="215"/><line x1="1210" y1="260" x2="1400" y2="260"/><line x1="1210" y1="305" x2="1430" y2="305"/></g>
+ <!-- table -->
+ <rect x="330" y="560" width="940" height="34" rx="8" fill="#8a6a4a"/><rect x="380" y="594" width="26" height="240" fill="#6f5338"/><rect x="1194" y="594" width="26" height="240" fill="#6f5338"/>
+ <!-- papers -->
+ <g id="papers"><rect x="560" y="520" width="200" height="44" rx="4" fill="#fff" stroke="#bbb" transform="rotate(-4 660 540)"/><rect x="600" y="512" width="200" height="44" rx="4" fill="#fdfdfd" stroke="#bbb"/></g>
+ <g id="sheet"><rect x="840" y="498" width="210" height="64" rx="4" fill="#fffbe9" stroke="#e08a1e" stroke-width="3"/><text x="945" y="540" text-anchor="middle" font-size="26" fill="#9b5a08" font-family="Tajawal,sans-serif">ورقة التنقيط</text></g>
+ <!-- teacher (right) -->
+ <g id="pT"><circle cx="1110" cy="330" r="66" fill="#e0b48f"/><path d="M1044 318q66-90 132 0q-10-60-66-64q-56 4-66 64z" fill="#2c2c2c"/>
+  <path d="M990 560q0-150 120-150q120 0 120 150z" fill="#176b63"/><rect x="1085" y="400" width="50" height="22" fill="#e0b48f"/>
+  <g id="tMouth"><path d="M1088 362q22 14 44 0" stroke="#7a3f2a" stroke-width="5" fill="none"/></g>
+  <circle cx="1088" cy="322" r="6" fill="#222"/><circle cx="1132" cy="322" r="6" fill="#222"/>
+  <text x="1110" y="640" text-anchor="middle" font-size="30" fill="#2f4f4a" font-family="Tajawal,sans-serif">الأستاذ</text></g>
+ <!-- colleague (left) -->
+ <g id="pC"><circle cx="490" cy="330" r="66" fill="#c9966d"/><path d="M424 312q66-84 132 0l-6-34q-60-50-120 0z" fill="#5b3b25"/>
+  <path d="M370 560q0-150 120-150q120 0 120 150z" fill="#8a5a8f"/><rect x="465" y="400" width="50" height="22" fill="#c9966d"/>
+  <g id="cMouth"><path d="M468 362q22 14 44 0" stroke="#6b3420" stroke-width="5" fill="none"/></g>
+  <circle cx="468" cy="322" r="6" fill="#222"/><circle cx="512" cy="322" r="6" fill="#222"/>
+  <text x="490" y="640" text-anchor="middle" font-size="30" fill="#2f4f4a" font-family="Tajawal,sans-serif">الزميل</text></g>
+ <!-- pen -->
+ <g id="pen"><rect x="900" y="470" width="12" height="80" rx="4" fill="#176b63" transform="rotate(30 906 510)"/></g>
+</svg>`;
+$('#anim').innerHTML = animSVG;
+const player = (()=>{
+  const vid=$('#vid'), useVideo=!!CONFIG.videoSrc;
+  let t=0, playing=false, last=0, raf=0;
+  if(useVideo){
+    vid.src=CONFIG.videoSrc; vid.classList.remove('hidden'); $('#anim').classList.add('hidden');
+    if(CONFIG.videoSubs){ vid.querySelector('track').src=CONFIG.videoSubs; $('#subs').classList.add('hidden'); }
+    vid.addEventListener('timeupdate',()=>{ t=vid.currentTime; render(); });
+    vid.addEventListener('ended',()=>{ playing=false; render(); afterEnd(); });
+    vid.addEventListener('pause',()=>{ playing=false; render(); });
+  }
+  function render(){
+    const d = useVideo && vid.duration ? vid.duration : DUR;
+    $('#vBar i').style.width=(t/d*100)+'%';
+    $('#vTime').textContent = `${Math.floor(t/60)}:${String(Math.floor(t%60)).padStart(2,'0')} / ${Math.floor(d/60)}:${String(Math.floor(d%60)).padStart(2,'0')}`;
+    $('#vPlay').textContent = playing?'⏸ إيقاف':'▶ تشغيل';
+    if(!useVideo){
+      const line = SCRIPT.find(s=>t>=s.a&&t<s.b);
+      $('#subs').innerHTML = line?`<span><span class="who">${line.who}:</span> «${line.txt}»</span>`:'';
+    }
+    const fz = !useVideo && t>=40; $('#freeze').classList.toggle('on',fz);
+    if(!useVideo){
+      const sp = SCRIPT.find(s=>t>=s.a&&t<s.b);
+      const talk = (Math.floor(t*6)%2===0);
+      $('#cMouth').setAttribute('transform', sp&&sp.who==='الزميل'&&playing&&talk?'translate(490 362) scale(1 .3) translate(-490 -362)':'');
+      $('#tMouth').setAttribute('transform', sp&&sp.who==='الأستاذ'&&playing&&talk?'translate(1110 362) scale(1 .3) translate(-1110 -362)':'');
+      const zoomIn = Math.min(1,Math.max(0,(t-38)/3));
+      const s = 1+zoomIn*1.4, cx=945, cy=530;
+      $('#anim svg').style.transform = `scale(${s})`; $('#anim svg').style.transformOrigin = `${cx/16}% ${cy/9}%`;
+      $('#pen').setAttribute('transform', t<20 && playing ? `translate(${Math.sin(t*5)*14} ${Math.cos(t*7)*4})` : '');
+    }
+  }
+  function tick(now){ if(!playing) return; t+= (now-last)/1000; last=now; if(t>=DUR){ t=DUR; playing=false; afterEnd(); } render(); if(playing) raf=requestAnimationFrame(tick); }
+  function afterEnd(){ $('#afterVideo').scrollIntoView({behavior:'smooth',block:'start'}); }
+  const api = {
+    play(){ if(useVideo){ vid.play().catch(()=>{}); playing=true; render(); return; } if(t>=DUR) t=0; playing=true; last=performance.now(); raf=requestAnimationFrame(tick); render(); },
+    pause(){ if(useVideo){ vid.pause(); } playing=false; cancelAnimationFrame(raf); render(); },
+    toggle(){ playing?api.pause():api.play(); },
+    seek(x){ if(useVideo){ vid.currentTime = x*(vid.duration||DUR); } else t=x*DUR; render(); },
+    restart(){ api.seek(0); api.play(); }
+  };
+  render(); return api;
+})();
+$('#vPlay').onclick=()=>player.toggle();
+$('#vRestart').onclick=()=>player.restart();
+$('#vBar').onclick=e=>{ const r=e.currentTarget.getBoundingClientRect(); player.seek((e.clientX-r.left)/r.width); };
+$('#player').addEventListener('click',e=>{ if(!e.target.closest('video')) player.toggle(); });
+$('#tPlay').onclick=()=>{ go(0); player.play(); };
+$('#tPause').onclick=()=>player.pause();
+
 const VCARDS=['الأمانة','المسؤولية','الإنصاف','الإحسان'];
 function renderVcards(){
   $('#vcards').innerHTML='';
